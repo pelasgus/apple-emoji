@@ -1,48 +1,90 @@
 ![AppleColorEmojiLinux](https://repository-images.githubusercontent.com/158348890/44a361ad-d9f3-4b7b-8b57-fd3198ec9952)
+Makes Apple's vibrant emojis available on Linux.
 
-# Apple Color Emoji for Linux
+>[!IMPORTANT]
+> Please note that this project is for educational purposes only. Apple is a trademark of Apple Inc., registered in the U.S. and other countries.
 
-Welcome to the world of colorful emojis on your Linux system! 🌈 This project brings Apple's vibrant emojis to your Linux experience.
+## 🚀 | PRE-BUILT BINARIES
+- Download the [latest release](https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf) of `AppleColorEmoji.ttf`.
+- Copy `AppleColorEmoji.ttf` to `~/.local/share/fonts`.
+```sh
+cp AppleColorEmoji.ttf ~/.local/share/fonts/
+```
+- Rebuild the font cache with `fc-cache -f -v`.
 
-## Disclaimer
+## 🛠 | BUILDING FROM SOURCE
+The provided [flake.nix](./flake.nix) or [shell.nix](shell.nix) can be used to automatically acquire dependencies, or handle them manually and build from source:
 
-🚨 Before we get started, please note that this project is for educational purposes only. Apple is a trademark of Apple Inc., registered in the U.S. and other countries.
-
-## 🚀 Installing Prebuilt AppleColorEmoji Font
-
-- 🔗 Download the [latest release](https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf) of `AppleColorEmoji.ttf` from our [Release Page](https://github.com/samuelngs/apple-emoji-linux/releases)
-- 📁 Copy `AppleColorEmoji.ttf` to `~/.local/share/fonts`.
-- 🔄 Rebuild the font cache with `fc-cache -f -v`.
-- 🎉 Voila! You're all set to embrace the world of expressive emojis!
-
-## 🛠 Building AppleColorEmoji from source
-
-You can decide to use the provided [flake.nix](./flake.nix) to automatically get the dependencies, or install the dependencies manually on your system and build from source:
-
-### Manually installing dependencies
-
-- 🐍 Install Python 3; the process currently requires a Python 3.x wide build.
-- 📦 Install the [fonttools Python package](https://github.com/fonttools/fonttools): `python -m pip install fonttools`
-- 📦 Install the [nototools Python package](https://github.com/googlei18n/nototools): `python -m pip install https://github.com/googlefonts/nototools/archive/v0.2.1.tar.gz`, or clone from [here](https://github.com/googlei18n/nototools) and follow the instructions.
-- 🛠 Install image optimization tools: [Optipng](http://optipng.sourceforge.net/), [Zopfli](https://github.com/google/zopfli), [Pngquant](https://pngquant.org/), and [ImageMagick](https://www.imagemagick.org/).
-  - On RedHat-based systems: `yum install optipng zopfli pngquant imagemagick`
-  - On Fedora: `dnf install optipng zopfli pngquant imagemagick`
-  - On Debian or Ubuntu: `apt-get install optipng zopfli pngquant imagemagick`
-- 🔄 Clone the [source repository](https://github.com/samuelngs/apple-emoji-linux) from GitHub.
-- 🖥 Open a terminal, navigate to the directory, and type `make -j` to build `AppleColorEmoji.ttf` from source.
-- ⚙️ To install the built `AppleColorEmoji.ttf` to your system, run `make install`.
-- 🔄 Rebuild your system font cache with `fc-cache -f -v`.
-
-### Using Nix
-
-- Install Nix and ensure flakes are enabled (look for `experimental-features = nix-command flakes` in your `nix.conf`). You can use the [Lix installer](https://lix.systems/install/) if you do not already have a working Nix install.
+### DEPENDENCY MANAGEMENT | THE FLAKE WAY
+```sh
+git clone git@github.com:samuelngs/apple-emoji-linux.git
+cd apple-emoji-linux
+nix shell .#apple-emoji-linux
+```
+or import the flake in your `flake.nix`:
+```nix
+# Apple Emoji Font
+inputs.apple-emoji.url = "github:typedrat/apple-emoji-linux?ref=fix-flake-on-unstable";
+inputs.apple-emoji.inputs.nixpkgs.follows = "nixpkgs";
+outputs = { self, nixpkgs, home-manager, apple-emoji, ... } @ inputs: 
+  # Variable Declaration
+  let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs {
+      inherit system;
+    };
+  in {
+  packages.${system} = {
+    apple-emoji = apple-emoji.packages.${system}.default;
+  };
+```
+### DEPENDENCY MANAGEMENT | THE SHELL WAY
+```sh
+git clone git@github.com:samuelngs/apple-emoji-linux.git
+cd apple-emoji-linux
+nix-shell shell.nix
+```
+### DEPENDENCY MANAGEMENT | THE MANUAL WAY
+- Install Python 3; the process currently requires a Python 3.x wide build.
+- Install the [fonttools Python package](https://github.com/fonttools/fonttools):
+```python
+python -m pip install fonttools
+```
+- Install the [nototools Python package](https://github.com/googlei18n/nototools):
+```sh
+python -m pip install https://github.com/googlefonts/nototools/archive/v0.2.1.tar.gz
+```
+or clone from [here](https://github.com/googlei18n/nototools) and follow the instructions.
+- Install image optimization tools: [Optipng](http://optipng.sourceforge.net/), [Zopfli](https://github.com/google/zopfli), [Pngquant](https://pngquant.org/), and [ImageMagick](https://www.imagemagick.org/).
+  - On yum-based systems:
+    ```sh
+    yum install optipng zopfli pngquant imagemagick
+    ```
+  - On dnf-based:
+    ```sh
+    dnf install optipng zopfli pngquant imagemagick
+    ```
+  - On apt-based:
+    ```sh
+    apt-get install optipng zopfli pngquant imagemagick
+    ```
+  - On pacman-based:
 - Clone the [source repository](https://github.com/samuelngs/apple-emoji-linux) from GitHub.
-- Navigate to the directory in a terminal and run `nix build` to start the build.
-- The built `AppleColorEmoji.ttf` will be in the `./result/share/fonts/truetype` folder.
+- Open a terminal, navigate to the directory
+- Run:
+```sh
+make -j
+make install
+```
+- Rebuild your system font cache with `fc-cache -f -v`.
 
-## 🌟 Using AppleColorEmoji
+
+## USAGE
 
 AppleColorEmoji uses the CBDT/CBLC color font format, which is supported by Android and Chrome/Chromium OS. Windows supports it starting with Windows 10 Anniversary Update in Chrome and Edge. On macOS, only Chrome supports it, while on Linux, it will support it with some fontconfig tweaking.
+
+### via NIX via Stylix
+
 
 ## 🎨 Color Emoji Assets
 
